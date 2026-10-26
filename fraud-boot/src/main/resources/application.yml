@@ -1,0 +1,62 @@
+spring:
+  application:
+    name: fraud-engine
+
+  config:
+    import: classpath:fraud-rules.yml
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/frauddb
+    username: fraud
+    password: fraud
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: fraud-engine-group
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: "*"
+    producer:
+      acks: all
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+
+otel:
+  service:
+    name: fraud-engine
+  exporter:
+    otlp:
+      endpoint: http://localhost:4318
+      protocol: http/protobuf
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.hibernate.SQL: INFO
+
+app:
+  kafka:
+    topics:
+      transactions: fraud.transactions.v1

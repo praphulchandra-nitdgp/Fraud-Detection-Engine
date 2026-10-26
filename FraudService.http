@@ -1,0 +1,105 @@
+### ============================================
+### Fraud Engine API
+### Base URL
+### ============================================
+
+@host = http://localhost:8080
+
+### ============================================
+### 1. Submit Transaction
+### ============================================
+# @name submitTransaction
+
+POST {{host}}/transactions
+Content-Type: application/json
+
+{
+  "accountId": "ACC-123",
+  "amount": 15000,
+  "merchant": "shady-store",
+  "country": "US",
+  "accountHomeCountry": "ZA"
+}
+
+### Save transactionId from response
+@transactionId = {{submitTransaction.response.body.transactionId}}
+
+
+### ============================================
+### 2. Get Fraud Check Result
+### ============================================
+
+GET {{host}}/transactions/{{transactionId}}/fraud-check
+Accept: application/json
+
+
+### ============================================
+### 3. Get Fraud Alerts For Transaction
+### ============================================
+
+GET {{host}}/fraud-alerts?transactionId={{transactionId}}
+Accept: application/json
+
+
+### ============================================
+### 4. Get All Fraud Alerts
+### ============================================
+
+GET {{host}}/fraud-alerts
+Accept: application/json
+
+
+### ============================================
+### 5. Test Normal Transaction
+### ============================================
+
+POST {{host}}/transactions
+Content-Type: application/json
+
+{
+  "accountId": "ACC-555",
+  "amount": 100,
+  "merchant": "grocery-store",
+  "country": "ZA",
+  "accountHomeCountry": "ZA"
+}
+
+
+### ============================================
+### 6. Test Velocity Rule
+### Run this several times quickly
+### ============================================
+
+POST {{host}}/transactions
+Content-Type: application/json
+
+{
+  "accountId": "ACC-999",
+  "amount": 50,
+  "merchant": "coffee-shop",
+  "country": "ZA",
+  "accountHomeCountry": "ZA"
+}
+
+### ============================================
+### 7. Test Kafka transactions
+### Run this several times quickly
+### ============================================
+
+POST {{host}}/kafka-test/transactions
+Content-Type: application/json
+
+{
+  "eventId": "evt-001",
+  "source": "ATM",
+  "occurredAt": "2026-03-12T10:15:00Z",
+  "transactionRequest": {
+    "accountId": "ACC-123",
+    "amount": 15000,
+    "merchant": "shady-store",
+    "country": "US",
+    "accountHomeCountry": "ZA"
+  }
+}
+
+

@@ -1,0 +1,23 @@
+fraud:
+  rules:
+    large-amount:
+      enabled: true
+      threshold: 10000
+      score: 50
+
+    velocity:
+      enabled: true
+      window-seconds: 60
+      max-transactions: 5
+      score: 30
+
+    country-mismatch:
+      enabled: true
+      score: 40
+
+    blacklisted-merchant:
+      enabled: true
+      score: 70
+      merchants:
+        - shady-store
+        - scam-pay
